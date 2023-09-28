@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "786169926022",
+    "project_id": "authbolig",
+    "storage_bucket": "authbolig.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786169926022:android:a5ad5bc9aa8ad137769c07",
+        "android_client_info": {
+          "package_name": "com.example.bolig"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCB9_fEzt6hXgfsKpgN8tfeCmkEWIbONfg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
