@@ -1,11 +1,13 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_interpolation_to_compose_strings
 import 'package:bolig/Pages/chate_page.dart';
+import 'package:bolig/theme/theme_provioder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key});
+  const HomePage({Key? key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -24,12 +26,25 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
-          IconButton(
-            onPressed: signUserOut,
-            icon: const Icon(Icons.logout), // You missed the Icon widget here
-          )
+          Row(children: [
+            IconButton(
+                onPressed: Provider.of<ThemeProvider>(context, listen: false)
+                    .toggleTheme,
+                icon: (Provider.of<ThemeProvider>(context, listen: false).dark)
+                    ? const Icon(Icons.sunny)
+                    : const Icon(Icons.nightlight)),
+            const SizedBox(
+              width: 10,
+            ),
+            IconButton(
+              onPressed: signUserOut,
+              icon: const Icon(Icons.logout), // You missed the Icon widget here
+            ),
+          ])
         ],
       ),
       body: _buildUserList(),

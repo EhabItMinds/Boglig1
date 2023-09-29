@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
 class EnterAmessageTextFiled extends StatefulWidget {
-  final controller;
+  final TextEditingController controller;
   final String hintText;
   final bool obscureText;
+  final Function(String) onChanged;
 
   const EnterAmessageTextFiled({
     Key? key,
     required this.controller,
     required this.hintText,
     required this.obscureText,
+    required this.onChanged,
   }) : super(key: key);
 
   @override
@@ -28,15 +30,13 @@ class _EnterAmessageTextFiledState extends State<EnterAmessageTextFiled> {
       child: TextField(
         controller: widget.controller,
         obscureText: widget.obscureText,
-        onChanged: (text) {
-          setState(() {}); // Rebuild the widget when text changes
-        },
+        onChanged: widget.onChanged,
         decoration: InputDecoration(
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
           hintText: widget.hintText,
           contentPadding:
-              EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+              const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
         ),
       ),
     );

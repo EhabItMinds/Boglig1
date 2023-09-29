@@ -1,8 +1,8 @@
 import 'package:bolig/model/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:string_2_icon/string_2_icon.dart';
 
 class ChateService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -51,5 +51,41 @@ class ChateService extends ChangeNotifier {
         .collection('messages')
         .orderBy('timestamp', descending: false)
         .snapshots();
+  }
+
+  Stream<List<dynamic>> getMessages1(String userId, String otherUserId) {
+    // Construct a chat room id from the current user id and receiver id
+    List<String> ids = [userId, otherUserId];
+    ids.sort(); // Sort the ids (this ensures the chat room id is always the same for any pair of people)
+    String chatRoomId = ids
+        .join("_"); // Combine the ids into a single string to use as a chatroom
+
+    return _firestore
+        .collection('chat_rooms')
+        .doc(chatRoomId)
+        .collection('messages')
+        .orderBy('timestamp', descending: false)
+        .snapshots()
+        .map((QuerySnapshot snapshot) {
+      // Map the snapshot documents to messages
+      return snapshot.docs.map((QueryDocumentSnapshot doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        String messageText = data['message'];
+
+        // Check if the message starts with an icon indicator
+        if (messageText.startsWith("[ICON]")) {
+          // Extract the icon identifier (e.g., "[ICON]star")
+          String iconString = messageText.substring(6); // Remove "[ICON]"
+
+          // Create an Icon widget
+          Icon icon = Icon(String2Icon.getIconDataFromString(iconString));
+
+          // Replace the message text with the Icon widget
+          data['message'] = icon;
+        }
+
+        return data;
+      }).toList();
+    });
   }
 }

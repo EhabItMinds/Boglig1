@@ -1,13 +1,10 @@
-import 'dart:ffi';
-
 import 'package:bolig/components/chat_bubble.dart';
-import 'package:bolig/components/enter_a_message.dart';
 import 'package:bolig/components/message_input.dart';
-import 'package:bolig/components/mytextfield.dart';
 import 'package:bolig/services/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:string_2_icon/string_2_icon.dart';
 
 class ChatePage extends StatefulWidget {
   final String receiverUserEmail;
@@ -30,6 +27,15 @@ class _ChatePageState extends State<ChatePage> {
     if (messageController.text.isNotEmpty) {
       await chateservice.sendMessage(
           widget.resiveruserid, messageController.text);
+      //clear the controller after sending the message
+      messageController.clear();
+    } else {
+      await chateservice.sendMessage(
+          widget.resiveruserid,
+          Icon(
+            String2Icon.getIconDataFromString('thumb_up'),
+            color: Colors.blue,
+          ).toString());
       //clear the controller after sending the message
       messageController.clear();
     }
@@ -86,17 +92,25 @@ class _ChatePageState extends State<ChatePage> {
 
   Widget buildMessageItem(DocumentSnapshot documentSnapshot) {
     Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+    String messageText = data['message'];
 
-    //align the messagees to the right if the sender is the current user, other WISE TO THE LEFT
-    var aligment = (data['senderId'] == firebaseauth.currentUser!.uid)
-        ? Alignment.centerRight
-        : Alignment.centerLeft;
+    // Check if the message starts with an icon indicator
+    if (messageText.startsWith("Icon")) {
+      // Create an Icon widget
+      Icon icon = const Icon(
+        IconData(0xe65b, fontFamily: 'MaterialIcons'),
+        color: Colors.blue,
+        size: 40,
+      );
 
-    return Container(
-      alignment: aligment,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: Column(
+      // Return the Icon widget
+      return Container(
+        alignment: (data['senderId'] == firebaseauth.currentUser!.uid)
+            ? Alignment.centerRight
+            : Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Column(
             crossAxisAlignment:
                 (data['senderId'] == firebaseauth.currentUser!.uid)
                     ? CrossAxisAlignment.end
@@ -107,47 +121,45 @@ class _ChatePageState extends State<ChatePage> {
                     : MainAxisAlignment.start,
             children: [
               // Text(data['senderEmail']),
-              const SizedBox(
-                height: 5,
+              const SizedBox(height: 5),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  icon, // Display the Icon
+                  const SizedBox(width: 5),
+                ],
               ),
-              (data['receiverId'] == firebaseauth.currentUser!.uid)
-                  ? ChatebubbleResiver(message: data['message'])
-                  : ChateBubbleSender(message: data['message'])
-            ]),
-      ),
-    );
-  }
-
-  //build message input
-
-  Widget buildMessageInput() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: EnterAmessageTextFiled(
-              controller: messageController,
-              hintText: 'Enter message',
-              obscureText: false,
-            ),
+            ],
           ),
-          IconButton(
-            onPressed: sendMessage,
-            icon: (messageController.text.isNotEmpty)
-                ? const Icon(
-                    Icons.send,
-                    size: 30,
-                    color: Colors.green,
-                  )
-                : const Icon(
-                    Icons.send,
-                    size: 30,
-                    color: Colors.blue,
-                  ),
-          )
-        ],
-      ),
-    );
+        ),
+      );
+    } else {
+      // Regular text message
+      return Container(
+        alignment: (data['senderId'] == firebaseauth.currentUser!.uid)
+            ? Alignment.centerRight
+            : Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Column(
+            crossAxisAlignment:
+                (data['senderId'] == firebaseauth.currentUser!.uid)
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
+            mainAxisAlignment:
+                (data['senderId'] == firebaseauth.currentUser!.uid)
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.start,
+            children: [
+              // Text(data['senderEmail']),
+              const SizedBox(height: 5),
+              (data['senderId'] == firebaseauth.currentUser!.uid)
+                  ? ChateBubbleSender(message: messageText)
+                  : ChatebubbleResiver(message: messageText)
+            ],
+          ),
+        ),
+      );
+    }
   }
 }

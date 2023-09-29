@@ -5,16 +5,27 @@ class MessageInputWidget extends StatefulWidget {
   final TextEditingController messageController;
   final Function sendMessage;
 
-  MessageInputWidget({
+  const MessageInputWidget({
+    super.key,
     required this.messageController,
     required this.sendMessage,
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _MessageInputWidgetState createState() => _MessageInputWidgetState();
 }
 
 class _MessageInputWidgetState extends State<MessageInputWidget> {
+  bool isTextNotEmpty = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize isTextNotEmpty based on the initial text in the controller
+    isTextNotEmpty = widget.messageController.text.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -26,23 +37,34 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
               controller: widget.messageController,
               hintText: 'Enter message',
               obscureText: false,
+              onChanged: (text) {
+                setState(() {
+                  isTextNotEmpty = text.isNotEmpty;
+                });
+              },
             ),
           ),
           IconButton(
-            onPressed: () {
-              if (widget.messageController.text.isNotEmpty) {
+              onPressed: () {
                 widget.sendMessage();
-                widget.messageController.clear();
-              }
-            },
-            icon: Icon(
-              Icons.send,
-              size: 30,
-              color: widget.messageController.text.isNotEmpty
-                  ? Colors.green
-                  : Colors.blue,
-            ),
-          )
+
+                if (isTextNotEmpty) {
+                  setState(() {
+                    isTextNotEmpty = false;
+                  });
+                }
+              },
+              icon: isTextNotEmpty
+                  ? const Icon(
+                      Icons.send,
+                      size: 30,
+                      color: Colors.blue,
+                    )
+                  : const Icon(
+                      Icons.thumb_up,
+                      size: 30,
+                      color: Colors.blue,
+                    ))
         ],
       ),
     );
