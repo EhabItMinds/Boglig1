@@ -1,3 +1,4 @@
+import 'package:bolig/Pages/message_list.dart';
 import 'package:bolig/components/chat_bubble.dart';
 import 'package:bolig/components/message_input.dart';
 import 'package:bolig/services/chat_service.dart';
@@ -53,7 +54,12 @@ class _ChatePageState extends State<ChatePage> {
         child: Column(children: [
           //messages
           Expanded(
-            child: _buildNessageList(),
+            child: MessageList(
+              chateService: chateservice,
+              receiverUserEmail: widget.receiverUserEmail,
+              resiveruserid: widget.resiveruserid,
+              firebaseauth: firebaseauth,
+            ),
           ),
           //user input
           MessageInputWidget(
@@ -66,100 +72,5 @@ class _ChatePageState extends State<ChatePage> {
         ]),
       ),
     );
-  }
-
-  //build message list
-  Widget _buildNessageList() {
-    return StreamBuilder(
-      stream: chateservice.getMessages(
-          widget.resiveruserid, firebaseauth.currentUser!.uid),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text('error ${snapshot.error}');
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('loading');
-        }
-        return ListView(
-          children: snapshot.data!.docs
-              .map((document) => buildMessageItem(document))
-              .toList(),
-        );
-      },
-    );
-  }
-  //build message item
-
-  Widget buildMessageItem(DocumentSnapshot documentSnapshot) {
-    Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
-    String messageText = data['message'];
-
-    // Check if the message starts with an icon indicator
-    if (messageText.startsWith("Icon")) {
-      // Create an Icon widget
-      Icon icon = const Icon(
-        IconData(0xe65b, fontFamily: 'MaterialIcons'),
-        color: Colors.blue,
-        size: 40,
-      );
-
-      // Return the Icon widget
-      return Container(
-        alignment: (data['senderId'] == firebaseauth.currentUser!.uid)
-            ? Alignment.centerRight
-            : Alignment.centerLeft,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: Column(
-            crossAxisAlignment:
-                (data['senderId'] == firebaseauth.currentUser!.uid)
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
-            mainAxisAlignment:
-                (data['senderId'] == firebaseauth.currentUser!.uid)
-                    ? MainAxisAlignment.end
-                    : MainAxisAlignment.start,
-            children: [
-              // Text(data['senderEmail']),
-              const SizedBox(height: 5),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  icon, // Display the Icon
-                  const SizedBox(width: 5),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      // Regular text message
-      return Container(
-        alignment: (data['senderId'] == firebaseauth.currentUser!.uid)
-            ? Alignment.centerRight
-            : Alignment.centerLeft,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: Column(
-            crossAxisAlignment:
-                (data['senderId'] == firebaseauth.currentUser!.uid)
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
-            mainAxisAlignment:
-                (data['senderId'] == firebaseauth.currentUser!.uid)
-                    ? MainAxisAlignment.end
-                    : MainAxisAlignment.start,
-            children: [
-              // Text(data['senderEmail']),
-              const SizedBox(height: 5),
-              (data['senderId'] == firebaseauth.currentUser!.uid)
-                  ? ChateBubbleSender(message: messageText)
-                  : ChatebubbleResiver(message: messageText)
-            ],
-          ),
-        ),
-      );
-    }
   }
 }

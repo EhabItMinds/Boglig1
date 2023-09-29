@@ -68,7 +68,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -81,7 +81,7 @@ class _LoginState extends State<Login> {
                 Text(
                   'Welcome back you\'ve been missed!',
                   style: TextStyle(
-                    color: Colors.grey[700],
+                    color: Theme.of(context).colorScheme.primary,
                     fontSize: 16,
                   ),
                 ),

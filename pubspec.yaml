@@ -41,6 +41,7 @@ dependencies:
   cloud_firestore: ^4.9.2
   string_2_icon: ^0.0.2
   provider: ^6.0.5
+  google_nav_bar: ^5.0.6
 
 dev_dependencies:
   flutter_test:
