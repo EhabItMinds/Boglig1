@@ -1,5 +1,5 @@
+import 'package:bolig/Pages/Chat/user_chat_page.dart';
 import 'package:bolig/Pages/apartment_page.dart';
-import 'package:bolig/Pages/user_chat_page.dart';
 import 'package:bolig/components/bottom_nav_bar.dart';
 import 'package:bolig/theme/theme_provioder.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -1,5 +1,5 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_interpolation_to_compose_strings
-import 'package:bolig/Pages/chate_page.dart';
+import 'package:bolig/Pages/Chat/chate_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
