@@ -1,5 +1,5 @@
 import 'package:bolig/Pages/Login.dart';
-import 'package:bolig/Pages/register_page.dart';
+import 'package:bolig/Pages/Login/register_page.dart';
 import 'package:flutter/material.dart';
 
 class LoginOrRegisterPage extends StatefulWidget {

@@ -10,7 +10,7 @@ class ApartmentPage extends StatefulWidget {
 class _ApartmentPageState extends State<ApartmentPage> {
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text('Lejligheder'),
     );
   }

@@ -28,6 +28,7 @@ class _EnterAmessageTextFiledState extends State<EnterAmessageTextFiled> {
         color: Colors.grey.shade200,
       ),
       child: TextField(
+        style: const TextStyle(color: Colors.black),
         controller: widget.controller,
         obscureText: widget.obscureText,
         onChanged: widget.onChanged,
@@ -35,6 +36,7 @@ class _EnterAmessageTextFiledState extends State<EnterAmessageTextFiled> {
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
           hintText: widget.hintText,
+          hintStyle: const TextStyle(color: Colors.black),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
         ),
