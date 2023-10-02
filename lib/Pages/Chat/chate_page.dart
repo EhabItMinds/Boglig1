@@ -37,6 +37,8 @@ class _ChatePageState extends State<ChatePage> {
           ).toString());
       //clear the controller after sending the message
       messageController.clear();
+
+
     }
   }
 

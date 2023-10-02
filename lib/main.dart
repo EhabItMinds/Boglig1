@@ -1,4 +1,4 @@
-import 'package:bolig/Pages/auth_page.dart';
+import 'package:bolig/Pages/Login/auth_page.dart';
 import 'package:bolig/theme/theme_provioder.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
