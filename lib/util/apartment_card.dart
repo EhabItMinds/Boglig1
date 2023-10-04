@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 
 class ApartmentCard extends StatefulWidget {
   final Apartment apartment;
-  ApartmentCard({super.key, required this.apartment});
+  const ApartmentCard({super.key, required this.apartment});
 
   @override
   State<ApartmentCard> createState() => _ApartmentCardState();
 }
 
 class _ApartmentCardState extends State<ApartmentCard> {
+  //denne kode har ingen funktion lige nu
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -26,7 +28,7 @@ class _ApartmentCardState extends State<ApartmentCard> {
         );
       },
       child: Container(
-        width: 320,
+        width: 350,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12), color: Colors.green),
         child: Column(

@@ -12,6 +12,13 @@ class FavoriteApsrtmentPage extends StatefulWidget {
 }
 
 class _FavoriteApsrtmentPageState extends State<FavoriteApsrtmentPage> {
+  bool value = false;
+  Future<void> refreshData() async {
+    setState(() {
+      value = true;
+    }); // This will trigger a rebuild of the widget
+  }
+
   final AparrmentService apartmentService = AparrmentService();
   @override
   Widget build(BuildContext context) {
@@ -36,7 +43,7 @@ class _FavoriteApsrtmentPageState extends State<FavoriteApsrtmentPage> {
 
   Widget _buildApartmentList() {
     return FutureBuilder<QuerySnapshot>(
-      future: apartmentService.getApartments(),
+      future: apartmentService.getLikedApartments(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Text('error');
@@ -97,8 +104,8 @@ class _FavoriteApsrtmentPageState extends State<FavoriteApsrtmentPage> {
             color: Colors.grey, // Use a grey color for the subtitle
           ),
         ),
-        onTap: () {
-          Navigator.push(
+        onTap: () async {
+          String refresh = await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ApartmentMoreInfo(
@@ -107,6 +114,9 @@ class _FavoriteApsrtmentPageState extends State<FavoriteApsrtmentPage> {
               ),
             ),
           );
+          if (refresh == 'refresh') {
+            refreshData();
+          }
         },
       );
     } else {

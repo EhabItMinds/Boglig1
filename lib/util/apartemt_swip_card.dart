@@ -25,31 +25,20 @@ class _ApartmentSwipCardState extends State<ApartmentSwipCard> {
 
   @override
   void initState() {
-    Apartment apartment = Apartment(
-        'Niels jules gade 1 800 aarhus c',
-        '12312',
-        '1231',
-        'Welcome to your new home! This cozy 2-bedroom apartment offers a perfect blend of comfort and convenience in the heart of the city. With stunning panoramic views of the city skyline and modern amenities, you will love living here',
-        'Helle helle',
-        imagePaths,
-        '4.8',
-        'ehab@gmail.com',
-        Timestamp.now(),
-        '213',
-        'HwTR6FMDJCUaNTiNdnyECT76PEq1');
+    // List<Apartment> apartments =  aparrmentService.getApartmentsQuery1();
 
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < apartments.length; i++) {
       _swipeItems.add(SwipeItem(
-          content: apartment,
+          content: apartments[i],
           likeAction: () {
-            aparrmentService.LikeApartment(apartment);
+            aparrmentService.LikeApartment(apartments[i]);
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Liked"),
               duration: Duration(milliseconds: 500),
             ));
           },
           nopeAction: () {
-            aparrmentService.unLikeApartment(apartment);
+            aparrmentService.unLikeApartment(apartments[i]);
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Nope"),
               duration: Duration(milliseconds: 500),

@@ -1,71 +1,63 @@
 import 'package:bolig/model/apartment.dart';
-import 'package:bolig/model/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:string_2_icon/string_2_icon.dart';
 
 class AparrmentService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  DocumentSnapshot? lastvisible;
 
-  Future<void> LoveAnApartment(String receiverId, Apartment apartment) async {
-//get current user info
-    final String currentUserId = _firebaseAuth.currentUser!.uid;
-    final String currenUserEmail = _firebaseAuth.currentUser!.email.toString();
-    final Timestamp timestamp = Timestamp.now();
-
-    //create a new apa
-    Apartment newapartment = Apartment(
-        apartment.address,
-        apartment.rent,
-        apartment.moveInPrice,
-        apartment.about,
-        apartment.tantInfo,
-        apartment.imagePath,
-        apartment.renterRating,
-        apartment.tantEmail,
-        timestamp,
-        currentUserId,
-        apartment.reciverId);
-    //construct a chat room id from current user ud and receiver id
-    List<String> ids = [currentUserId, receiverId];
-    ids.sort(); // sort the ids (this ensures the chat room id is always the same for any pair of peolpe)
-    String chaRommsId = ids
-        .join("_"); // combine the ids into a single string to use as a chatroom
-
-    //add new message to database
-    await _firestore
-        .collection('liked_apartments')
-        .doc(chaRommsId)
-        .collection('apartments')
-        .add(newapartment.toMap());
-  }
-
-  //get message
-
-  Stream<QuerySnapshot> getApartment_messages(
-      String userId, String otherUserId) {
-    //construct a chat room id from current user ud and receiver id
-    List<String> ids = [userId, otherUserId];
-    ids.sort(); // sort the ids (this ensures the chat room id is always the same for any pair of peolpe)
-    String chaRommsId = ids
-        .join("_"); // combine the ids into a single string to use as a chatroom
-
-    return _firestore
-        .collection('liked_apartments')
-        .doc(chaRommsId)
-        .collection('apartments')
-        .orderBy('timestamp', descending: false)
-        .snapshots();
-  }
-
-  Future<QuerySnapshot> getApartments() async {
+  Future<QuerySnapshot> getLikedApartments() async {
     final String currentUserId = _firebaseAuth.currentUser!.uid;
     return await FirebaseFirestore.instance
         .collection('liked_apartments')
         .where('senderId', isEqualTo: currentUserId)
         .get();
+  }
+
+  Future<List<Apartment>> getApartmentsQuery1() async {
+    var apartments = <Apartment>[];
+
+    // [START paginate_data_paginate_a_query]
+    // Construct query for first 25 cities, ordered by population
+    final first = FirebaseFirestore.instance.collection("apartments").limit(5);
+
+    await first.get().then(
+      (QuerySnapshot<Map<String, dynamic>> documentSnapshots) {
+        // You can access the data in the documentSnapshots here
+        // For example, you can loop through the documents like this:
+        for (QueryDocumentSnapshot<Map<String, dynamic>> document
+            in documentSnapshots.docs) {
+          Map<String, dynamic> data = document.data();
+          // Now, you can work with the 'data' Map
+
+          apartments.add(mapping(data));
+        }
+      },
+      onError: (e) => print("Error loading first apartments: $e"),
+    );
+    return apartments;
+  }
+
+  Apartment mapping(Map<String, dynamic> data) {
+    Apartment apartment;
+    //display all but not the curren user
+
+    apartment = Apartment(
+        data['address'],
+        data['rent'],
+        data['moveInPrice'],
+        data['about'],
+        data['tantInfo'],
+        List<String>.from(data['imagePath']),
+        data['renterRating'],
+        data['tantEmail'],
+        data['timestamp'],
+        data['senderId'],
+        data['reciverId']);
+
+    return apartment;
   }
 
   Future<void> LikeApartment(Apartment apartment) async {
@@ -124,70 +116,80 @@ class AparrmentService extends ChangeNotifier {
 
     List<Apartment> apartments = [
       Apartment(
-          '123 Main Street',
-          '1200',
-          '2400',
-          'A spacious apartment in a prime location.',
-          'John Doe',
-          ['image1.jpg', 'image2.jpg'],
-          '4.5',
-          'ehab@gmail.com',
-          timestamp,
-          '123',
-          'HwTR6FMDJCUaNTiNdnyECT76PEq1'),
-      Apartment(
-          '456 Elm Avenue',
-          '1500',
-          '3000',
-          'Cozy apartment with a beautiful view.',
-          'Jane Smith',
-          ['image3.jpg', 'image4.jpg'],
-          '4.2',
-          'ehab@gmail.com',
-          timestamp,
-          '212',
-          'HwTR6FMDJCUaNTiNdnyECT76PEq1'),
-      Apartment(
-          'Niels jules gade 1 800 aarhus c',
-          '12312',
-          '1231',
-          'Welcome to your new home! This cozy 2-bedroom apartment offers a perfect blend of comfort and convenience in the heart of the city. With stunning panoramic views of the city skyline and modern amenities, you will love living here',
-          'Helle helle',
-          imagePaths,
-          '4.8',
-          'ehab@gmail.com',
-          Timestamp.now(),
-          '213',
-          'HwTR6FMDJCUaNTiNdnyECT76PEq1'),
-      Apartment(
-          '789 Oak Lane',
-          '1800',
-          '3600',
-          'Modern apartment with top-notch amenities.',
-          'Michael Johnson',
-          ['image5.jpg', 'image6.jpg'],
-          '4.8',
-          'ehab@gmail.com',
-          Timestamp.now(),
-          '21',
-          'HwTR6FMDJCUaNTiNdnyECT76PEq1'),
-      Apartment(
-        '101 Pine Street',
-        '1300',
-        '2600',
-        'Charming historic apartment in the city center.',
-        'Sarah Brown',
-        ['image7.jpg', 'image8.jpg'],
-        '4.0',
+        '1234 Elm Street',
+        '1100',
+        '2200',
+        'A cozy apartment in a quiet neighborhood.',
+        'Alice Johnson',
+        ['image2.jpg', 'image4.jpg'], // Same image file names
+        '4.7',
         'ehab@gmail.com',
         timestamp,
-        '21e',
-        'HwTR6FMDJCUaNTiNdnyECT76PEq1',
+        '456',
+        'HwTR6FMDJCUaNTiNdnyECT76PEq1', // Updated user ID
+      ),
+      Apartment(
+        '789 Oak Avenue',
+        '1600',
+        '3200',
+        'Modern apartment with great amenities.',
+        'Robert Davis',
+        ['image1.jpg', 'image3.jpg'], // Same image file names
+        '4.4',
+        'ehab@gmail.com',
+        timestamp,
+        '789',
+        'HwTR6FMDJCUaNTiNdnyECT76PEq1', // Updated user ID
+      ),
+      Apartment(
+        '1011 Maple Lane',
+        '1350',
+        '2700',
+        'Spacious 2-bedroom apartment with a view.',
+        'Emily Smith',
+        ['image7.jpg', 'image8.jpg'], // Same image file names
+        '4.9',
+        'ehab@gmail.com',
+        timestamp,
+        '1011',
+        'HwTR6FMDJCUaNTiNdnyECT76PEq1', // Updated user ID
+      ),
+      // Additional Apartments with the same image file names
+      Apartment(
+        '567 Pine Street',
+        '1250',
+        '2500',
+        'A charming apartment with a garden view.',
+        'David Wilson',
+        ['image2.jpg', 'image4.jpg'], // Same image file names
+        '4.5',
+        'ehab@gmail.com',
+        timestamp,
+        '567',
+        'HwTR6FMDJCUaNTiNdnyECT76PEq1', // Updated user ID
+      ),
+      Apartment(
+        '890 Cedar Avenue',
+        '1450',
+        '2900',
+        'Stylish apartment in a vibrant neighborhood.',
+        'Linda Brown',
+        ['image1.jpg', 'image3.jpg'], // Same image file names
+        '4.3',
+        'ehab@gmail.com',
+        timestamp,
+        '890',
+        'HwTR6FMDJCUaNTiNdnyECT76PEq1', // Updated user ID
       ),
     ];
 
-    // await FirebaseFirestore.instance
-    //     .collection('liked_apartments')
-    //     .add(newapartment.toMap());
+    final CollectionReference apartmentsCollection =
+        FirebaseFirestore.instance.collection('apartments');
+
+    for (var apartmentData in apartments) {
+      await apartmentsCollection.add(apartmentData.toMap());
+    }
+
+    print('Apartments added to Firestore');
   }
 }

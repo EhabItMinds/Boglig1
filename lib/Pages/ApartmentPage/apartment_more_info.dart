@@ -39,6 +39,22 @@ class _ApartmentMoreInfoState extends State<ApartmentMoreInfo> {
         foregroundColor: Provider.of<ThemeProvider>(context).dark
             ? Colors.white
             : Colors.black,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+          ),
+          onPressed: () {
+            // Define your custom back button functionality here
+            // For example, you can navigate back to a specific route or perform some other action.
+            Navigator.pop(context, 'refresh');
+          },
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search, color: Theme.of(context).iconTheme.color),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -127,10 +143,10 @@ class _ApartmentMoreInfoState extends State<ApartmentMoreInfo> {
                   (widget.loved)
                       ? Row(children: [
                           IconButton(
-                            onPressed: () {
-                              aparrmentService
+                            onPressed: () async {
+                              await aparrmentService
                                   .unLikeApartment(widget.apartment);
-                              Navigator.pop(context);
+                              Navigator.pop(context, 'refresh');
                             },
                             icon: const Icon(
                               Icons.heart_broken,
