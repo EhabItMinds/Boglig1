@@ -1,4 +1,4 @@
-import 'package:bolig/util/apartemt_swip_card.dart';
+import 'package:bolig/util/apartmet_item_list.dart';
 import 'package:flutter/material.dart';
 
 class ApartmentPage extends StatefulWidget {
@@ -21,7 +21,7 @@ class _ApartmentPageState extends State<ApartmentPage> {
 
 //picks
 // arbejde med den her
-        SizedBox(height: 525, width: 600, child: ApartmentSwipCard()),
+        SizedBox(height: 525, width: 600, child: ApartemtItemList()),
 
         Padding(
           padding: EdgeInsets.only(top: 2),

@@ -1,4 +1,3 @@
-import 'package:bolig/Pages/ApartmentPage/favorite_apartment_page.dart';
 import 'package:bolig/Pages/Chat/chate_page.dart';
 import 'package:bolig/model/apartment.dart';
 import 'package:bolig/services/apartment_service.dart';
@@ -179,7 +178,7 @@ class _ApartmentMoreInfoState extends State<ApartmentMoreInfo> {
                         ])
                       : IconButton(
                           onPressed: () {
-                            aparrmentService.LikeApartment(widget.apartment);
+                            aparrmentService.likeApartment(widget.apartment);
                           },
                           icon: const Icon(
                             Icons.favorite,

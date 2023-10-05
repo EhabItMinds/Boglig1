@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 
 class AparrmentService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  DocumentSnapshot? lastvisible;
 
   Future<QuerySnapshot> getLikedApartments() async {
     final String currentUserId = _firebaseAuth.currentUser!.uid;
@@ -16,51 +14,23 @@ class AparrmentService extends ChangeNotifier {
         .get();
   }
 
-  Future<List<Apartment>> getApartmentsQuery1() async {
-    var apartments = <Apartment>[];
-
-    // [START paginate_data_paginate_a_query]
-    // Construct query for first 25 cities, ordered by population
-    final first = FirebaseFirestore.instance.collection("apartments").limit(5);
-
-    await first.get().then(
-      (QuerySnapshot<Map<String, dynamic>> documentSnapshots) {
-        // You can access the data in the documentSnapshots here
-        // For example, you can loop through the documents like this:
-        for (QueryDocumentSnapshot<Map<String, dynamic>> document
-            in documentSnapshots.docs) {
-          Map<String, dynamic> data = document.data();
-          // Now, you can work with the 'data' Map
-
-          apartments.add(mapping(data));
-        }
-      },
-      onError: (e) => print("Error loading first apartments: $e"),
-    );
-    return apartments;
+  Future<QuerySnapshot> getApartmentsInit() async {
+    return FirebaseFirestore.instance.collection("apartments").limit(5).get();
   }
 
-  Apartment mapping(Map<String, dynamic> data) {
-    Apartment apartment;
-    //display all but not the curren user
+  Future<QuerySnapshot<Map<String, dynamic>>> getApartmentsNext(
+      QueryDocumentSnapshot lastVisible) async {
+    final query = FirebaseFirestore.instance
+        .collection("apartments")
+        .startAfterDocument(lastVisible)
+        .limit(5);
 
-    apartment = Apartment(
-        data['address'],
-        data['rent'],
-        data['moveInPrice'],
-        data['about'],
-        data['tantInfo'],
-        List<String>.from(data['imagePath']),
-        data['renterRating'],
-        data['tantEmail'],
-        data['timestamp'],
-        data['senderId'],
-        data['reciverId']);
+    final snapshot = await query.get();
 
-    return apartment;
+    return snapshot;
   }
 
-  Future<void> LikeApartment(Apartment apartment) async {
+  Future<void> likeApartment(Apartment apartment) async {
     final String currentUserId = _firebaseAuth.currentUser!.uid;
     final Timestamp timestamp = Timestamp.now();
 
@@ -107,12 +77,7 @@ class AparrmentService extends ChangeNotifier {
   }
 
   Future<void> initiapartments() async {
-    final String currentUserId = '1';
     final Timestamp timestamp = Timestamp.now();
-    List<String> imagePaths = [
-      'lib/images/Lejlighed1.png',
-      'lib/images/Lejlighed2.png'
-    ];
 
     List<Apartment> apartments = [
       Apartment(

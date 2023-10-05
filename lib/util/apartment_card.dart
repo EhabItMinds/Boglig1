@@ -73,13 +73,13 @@ class _ApartmentCardState extends State<ApartmentCard> {
                   Column(
                     children: [
                       const Text('Move in price'),
-                      Text(widget.apartment.moveInPrice + ' kr'),
+                      Text('${widget.apartment.moveInPrice} kr'),
                     ],
                   ),
                   Column(
                     children: [
                       const Text('Rent'),
-                      Text(widget.apartment.rent + ' kr'),
+                      Text('${widget.apartment.rent} kr'),
                     ],
                   ),
                   Column(

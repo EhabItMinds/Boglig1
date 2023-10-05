@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
 
   //pages to display
   final List<Widget> pages = [
-    const ApartmentPage(),
+    ApartmentPage(),
     const UserChatPage(),
     const FavoriteApsrtmentPage(),
   ];
