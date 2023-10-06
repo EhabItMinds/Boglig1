@@ -1,8 +1,9 @@
 import 'package:bolig/Pages/ApartmentPage/apartment_page.dart';
 import 'package:bolig/Pages/ApartmentPage/favorite_apartment_page.dart';
 import 'package:bolig/Pages/Chat/user_chat_page.dart';
-import 'package:bolig/Pages/lazy_load_indexed_stack.dart';
+import 'package:bolig/Pages/about.dart';
 import 'package:bolig/components/bottom_nav_bar.dart';
+import 'package:bolig/filter_page.dart';
 import 'package:bolig/theme/theme_provioder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   //denne er til at controller bottom nav bar
   int selectedIndex = 0;
-//denne metode vil opdatere vores index når brugeren trykker
+
   void navigateBottomBar(int index) {
     setState(() {
       selectedIndex = index;
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage> {
     const ApartmentPage(),
     const UserChatPage(),
     const FavoriteApsrtmentPage(),
+    const FilterPage(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -72,9 +74,13 @@ class _HomePageState extends State<HomePage> {
                 width: 10,
               ),
               IconButton(
-                onPressed: signUserOut,
-                icon: const Icon(Icons.logout,
-                    color: Colors.black), // You missed the Icon widget here
+                onPressed: () {
+                  Provider.of<ThemeProvider>(context, listen: false)
+                      .toggleTheme();
+                },
+                icon: Provider.of<ThemeProvider>(context).dark
+                    ? const Icon(Icons.logout)
+                    : const Icon(Icons.logout, color: Colors.black),
               ),
             ],
           ),
@@ -104,27 +110,41 @@ class _HomePageState extends State<HomePage> {
                     title: Text('Home'),
                   ),
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(left: 25),
-                  child: ListTile(
-                    leading: Icon(Icons.info),
-                    title: Text('About'),
+                  child: GestureDetector(
+                    onTap: () {
+                      // Use a callback function here
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const about(),
+                        ),
+                      );
+                    },
+                    child: const ListTile(
+                      leading: Icon(Icons.info),
+                      title: Text('About'),
+                    ),
                   ),
                 ),
               ],
             ),
             const Spacer(),
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(left: 25, bottom: 25),
-              child: ListTile(
-                leading: Icon(Icons.logout),
-                title: Text('Logout'),
+              child: GestureDetector(
+                onTap: signUserOut,
+                child: const ListTile(
+                  leading: Icon(Icons.logout),
+                  title: Text('Logout'),
+                ),
               ),
             ),
           ],
         ),
       ),
-      body: LazyLoadIndexedStack(
+      body: IndexedStack(
         index: selectedIndex,
         children: pages,
       ),

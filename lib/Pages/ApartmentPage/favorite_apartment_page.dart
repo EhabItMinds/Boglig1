@@ -32,9 +32,12 @@ class _FavoriteApsrtmentPageState extends State<FavoriteApsrtmentPage> {
           const SizedBox(
             height: 10,
           ),
-          SizedBox(
-            height: 500,
-            child: _buildApartmentList(),
+          RefreshIndicator(
+            onRefresh: refreshData,
+            child: SizedBox(
+              height: 500,
+              child: _buildApartmentList(),
+            ),
           ),
         ],
       ),
@@ -52,9 +55,22 @@ class _FavoriteApsrtmentPageState extends State<FavoriteApsrtmentPage> {
           return const Text('loading');
         }
         return ListView(
-          children: snapshot.data!.docs
-              .map<Widget>((doc) => _buildUserListItem(doc))
-              .toList(),
+          children: snapshot.data!.docs.map<Widget>((doc) {
+            return Dismissible(
+              key: Key(doc.id), // Use a unique key for each item
+              onDismissed: (direction) {
+                apartmentService.unLikeApartment(_buildApartmetItem(doc));
+              },
+              background: Container(
+                color: Colors.red,
+                child: const Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                ),
+              ),
+              child: _buildUserListItem(doc),
+            );
+          }).toList(),
         );
       },
     );
@@ -62,7 +78,6 @@ class _FavoriteApsrtmentPageState extends State<FavoriteApsrtmentPage> {
 
   Widget _buildUserListItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-
     //display all but not the curren user
     if (data.isNotEmpty) {
       Apartment apartment = Apartment(
@@ -122,5 +137,23 @@ class _FavoriteApsrtmentPageState extends State<FavoriteApsrtmentPage> {
     } else {
       return Container();
     }
+  }
+
+  Apartment _buildApartmetItem(DocumentSnapshot document) {
+    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+    Apartment apartment = Apartment(
+        data['address'],
+        data['rent'],
+        data['moveInPrice'],
+        data['about'],
+        data['tantInfo'],
+        List<String>.from(data['imagePath']),
+        data['renterRating'],
+        data['tantEmail'],
+        data['timestamp'],
+        data['senderId'],
+        data['reciverId']);
+    return apartment;
   }
 }

@@ -31,6 +31,10 @@ class MyBottomNavBar extends StatelessWidget {
               icon: Icons.favorite,
               text: 'Loved',
             ),
+            GButton(
+              icon: Icons.filter_list,
+              text: 'Filter',
+            ),
           ]),
     );
   }
