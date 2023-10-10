@@ -75,8 +75,7 @@ class _HomePageState extends State<HomePage> {
               ),
               IconButton(
                 onPressed: () {
-                  Provider.of<ThemeProvider>(context, listen: false)
-                      .toggleTheme();
+                  signUserOut();
                 },
                 icon: Provider.of<ThemeProvider>(context).dark
                     ? const Icon(Icons.logout)

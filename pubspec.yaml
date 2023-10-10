@@ -46,6 +46,7 @@ dependencies:
   google_fonts: ^6.1.0
   swipe_cards: ^2.0.0+1
   flutter_slidable: ^3.0.0
+  slide_to_act: ^2.0.2
 
 flutter_launcher_icons:
   #  image_path: "assets/images/icon-128x128.png"

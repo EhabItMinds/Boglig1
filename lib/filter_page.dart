@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:slide_to_act/slide_to_act.dart';
 
 /// Flutter code sample for [FilterChip].
 
@@ -16,6 +18,12 @@ class FilterPage extends StatefulWidget {
 class _FilterPageState extends State<FilterPage> {
   Set<accommodationFilter> accofilters = <accommodationFilter>{};
   Set<accommodationCityFilter> ciryfilters = <accommodationCityFilter>{};
+  bool value = false;
+  Future<void> refreshData() async {
+    setState(() {
+      value = true;
+    }); // Thi
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,19 +39,19 @@ class _FilterPageState extends State<FilterPage> {
             Wrap(
               spacing: 10.0,
               children: accommodationFilter.values
-                  .map((accommodationFilter exercise) {
+                  .map((accommodationFilter accommodation) {
                 return FilterChip(
                   label: Text(
-                    exercise.name,
+                    accommodation.name,
                     style: const TextStyle(fontSize: 16),
                   ),
-                  selected: accofilters.contains(exercise),
+                  selected: accofilters.contains(accommodation),
                   onSelected: (bool selected) {
                     setState(() {
                       if (selected) {
-                        accofilters.add(exercise);
+                        accofilters.add(accommodation);
                       } else {
-                        accofilters.remove(exercise);
+                        accofilters.remove(accommodation);
                       }
                     });
                   },
@@ -83,6 +91,35 @@ class _FilterPageState extends State<FilterPage> {
             const SizedBox(height: 10.0),
             Text(
                 'Looking for: ${accofilters.map((accommodationFilter e) => e.name).join(', ')} ${ciryfilters.map((accommodationCityFilter e) => e.name).join(', ')} '),
+            const Spacer(),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: SlideAction(
+                  borderRadius: 40,
+                  elevation: 0,
+                  innerColor: Colors.deepPurple,
+                  outerColor: Colors.deepPurple[200],
+                  sliderButtonIcon: const Icon(
+                    Icons.home,
+                    color: Colors.white,
+                  ),
+                  text: 'Slide to filter',
+                  sliderRotate: false,
+                  onSubmit: () {
+                    for (var acc in accofilters) {
+                      print(acc.name);
+                    }
+                    for (var city in ciryfilters) {
+                      print(city.name);
+                    }
+                    accofilters.clear();
+                    ciryfilters.clear();
+                    refreshData();
+                  },
+                ),
+              ),
+            )
           ],
         ),
       ),
